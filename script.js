@@ -7,6 +7,10 @@ const countdownElTitle = document.getElementById('countdown-title');
 const countdownBtn = document.getElementById('countdown-button');
 const timeElement = document.querySelectorAll('span');
 
+const completeEl = document.getElementById('complete');
+const completeElInfo = document.getElementById('complete-info');
+const completeBtn = document.getElementById('complete-button');
+
 let countdownTitle = '';
 let countDownDate = '';
 let countdownValue = Date;
@@ -34,17 +38,25 @@ function updateDOM() {
     const seconds = Math.floor((distance % minute) / second);
     console.log(days, hours, minutes, seconds);
 
-    // Populating Countdown
-    countdownElTitle.textContent = `${countdownTitle}`;
-    timeElement[0].textContent = `${days}`;
-    timeElement[1].textContent = `${hours}`;
-    timeElement[2].textContent = `${minutes}`;
-    timeElement[3].textContent = `${seconds}`;
-
     // Hide Input
     inputContainer.hidden = true;
-    // Show Countdown
-    countdownEl.hidden = false;
+
+    // If the countdown has ended, show complete
+    if (distance < 0) {
+      countdownEl.hidden = true;
+      clearInterval(countdownActive);
+      completeElInfo.textContent = `${countdownTitle} finished on ${countDownDate}`;
+      completeEl.hidden = false;
+    } else {
+      // Else, show the countdown in progress
+      countdownElTitle.textContent = `${countdownTitle}`;
+      timeElement[0].textContent = `${days}`;
+      timeElement[1].textContent = `${hours}`;
+      timeElement[2].textContent = `${minutes}`;
+      timeElement[3].textContent = `${seconds}`;
+      completeEl.hidden = true;
+      countdownEl.hidden = false;
+    }
   }, second);
 }
 
@@ -69,6 +81,7 @@ function updateCountdown(e) {
 function reset() {
   // Hide Countdowns, Show Input
   countdownEl.hidden = true;
+  completeEl.hidden = true;
   inputContainer.hidden = false;
   // Stop the Countdown
   clearInterval(countdownActive);
@@ -80,3 +93,4 @@ function reset() {
 // Event Listener
 countdownForm.addEventListener('submit', updateCountdown);
 countdownBtn.addEventListener('click', reset);
+completeBtn.addEventListener('click', reset);
